@@ -46,6 +46,7 @@ combined.train.data <- cbind(subject.train, y.train, x.train)
 #combine test and training data
 complete.data <- rbind(combined.test.data, combined.train.data)
 
+
 # Step 2: extracts only measurements on the mean and std for each measurement
 # First find the features that contain (ignoring case) "mean" or "std" assuming these are all
 # the measurements that are needed
@@ -61,13 +62,6 @@ reduced.dData <- completeData[,c(1,2, mean.and.std.features$FeatureId + 2)]
 reduced.dData[,2] <- factor(reduced.dData[,2], levels = c(1,2,3,4,5,6), 
       gsub("_", ".", tolower(activity_labels)))
                           
-#                          labels=c("walking", 
-#                "walking.upstairs", 
-#                "walking.downstairs", 
-#                "sitting", 
-#                "standing", 
-#                "laying"))
-
 
 #Step 4: Finally set the column names
 colnames(reduced.dData) <-c("Subject", "Activity", mean.and.std.features$FeatureName)
