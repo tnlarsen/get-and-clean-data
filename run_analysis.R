@@ -50,21 +50,28 @@ complete.data <- rbind(combined.test.data, combined.train.data)
 # Step 2: extracts only measurements on the mean and std for each measurement
 # First find the features that contain (ignoring case) "mean" or "std" assuming these are all
 # the measurements that are needed
-mean.and.std.features =  features[grepl("mean|std", features$FeatureName, ignore.case = TRUE), ]
+mean.and.std.features =  features[grepl("mean|std", features$feature.name, ignore.case = TRUE), ]
 rownames( mean.and.std.features ) <- NULL
 
 # Extract the mean and std columns from the complete data
-reduced.data <- completeData[,c(1,2, mean.and.std.features$FeatureId + 2)]
+reduced.data <- completeData[,c(1,2, mean.and.std.features$feature.id + 2)]
 
 
 # Step 3: use descriptive activity names to name the activities
 # Using the information from the "activity labels.txt" file
-reduced.data[,2] <- factor(reduced.data[,2], levels = c(1,2,3,4,5,6), 
-      gsub("_", ".", tolower(activity_labels)))
+reduced.data[,2] <- factor(reduced.data[,2], levels = c(1,2,3,4,5,6), gsub("_", ".", tolower(activity_labels)))
                           
 
-#Step 4: Finally set the column names
-colnames(reduced.data) <-c("Subject", "Activity", mean.and.std.features$feature.name)
+# Step 4: Appropriatly label the data
+# First the labels are massaged a bit:
+
+labels <- mean.and.std.features$feature.name
+
+labels <- gsub("([a-z])([A-Z])", "\\1.\\L\\2", labels, perl = TRUE)  # Convert from calmelCase to . separated
+labels <- gsub("acc", "acceleration", labels)  # Expand acc to acceleration
+labels <- gsub("[()-]", "", labels)  # Remove special characters
+
+colnames(reduced.data) <-c("subject", "activity", labels)
 
 
 
