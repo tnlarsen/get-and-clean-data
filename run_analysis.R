@@ -1,55 +1,78 @@
 
-#Various constansts
-fileUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
+# Various constansts
+file.url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
 
-zipFileName <- "./data/UCI HAR Dataset.zip" 
-dataDirName <- "data"
+data.dir <- file.path(".", "data")
+zip.file <- file.path(data.dir, "UCI HAR Dataset.zip")
+main.data.dir <- file.path(data.dir, "UCI HAR Dataset")
+test.data.dir <- file.path(data.dir, "UCI HAR Dataset", "test")
+train.data.dir <- file.path(data.dir, "UCI HAR Dataset", "train")
 
-#Download and unzip the file if needed and load the relevant data
-get.data <- function() {
-  
-  if(!file.exists(dataDirName)) {
-    dir.create(dataDirName)
+
+# Step 0: Download and unzip the file if needed and load the relevant data
+if(!file.exists(data.dir)) {
+    dir.create(data.dir)
     
     print('Downloading')
     download.file(url = fileUrl, destfile = zipFileName, method = "curl")
     
     print('Unzipping')
-    unzip(zipFileName, exdir=dataDirName)
-  }
-
+    unzip(zipFileName, exdir = data.dir)
 }
 
-#Load the relevant files
-get.data()
+x.test <- read.table(file.path(test.data.dir, "X_test.txt"))
+y.test <- read.table(file.path(test.data.dir, "y_test.txt"))
+subject.test <- read.table(file.path(test.data.dir, "subject_test.txt"))
 
-X_test <- read.table("./data/UCI HAR Dataset/test/X_test.txt")
-y_test <- read.table("./data/UCI HAR Dataset/test/y_test.txt")
-subject_test <- read.table("./data/UCI HAR Dataset/test/subject_test.txt")
+x.train <- read.table(file.path(train.data.dir, "X_train.txt"))
+y.train <- read.table(file.path(train.data.dir, "y_train.txt"))
+subject.train <- read.table(file.path(train.data.dir, "subject_train.txt"))
 
-X_train <- read.table("./data/UCI HAR Dataset/train/X_train.txt")
-y_train <- read.table("./data/UCI HAR Dataset/train/y_train.txt")
-subject_train <- read.table("./data/UCI HAR Dataset/train/subject_train.txt")
+features <- read.table(file.path(main.data.dir, "features.txt"), 
+                       col.names = c("feature.id", "feature.name"),
+                       colClasses=c("feature.name"="character"))
 
-features <- read.table("./data/UCI HAR Dataset/features.txt", col.names = c("FeatureId", "FeatureName"))
+activity.labels <- readLines(file.path(maindata.dir, "activity_labels.txt"))
 
-#Find the features that contain (ignoring case) "mean" or "std"
-mean_and_std_features =  features[grepl("mean|std", features$FeatureName, ignore.case = TRUE), ]
-rownames( mean_and_std_features ) <- NULL
+# Step 1: merge training and test sets into one data set
+# First the subjects and activites are combined with the measurements by adding
+# them as the first two columns. This is done for both test and training data. Then the 
+# test and training data are combined vertically as rows.
 
-#Extract the mean and std columns from test and train data
-X_test_mean_std <- X_test[,mean_and_std_features$FeatureId]
-X_train_mean_std <- X_train[,mean_and_std_features$FeatureId]
-
-#Set the column names
-colnames(X_test_mean_std) <- mean_and_std_features$FeatureName
-colnames(X_train_mean_std) <- mean_and_std_features$FeatureName
-
-#Combine the subject data, labels and measurements
-combinedTestData <- cbind(subject_test, y_test, X_test_mean_std)
-combinedTrainData <- cbind(subject_train, y_train, X_train_mean_std)
+# Combine the subject data, labels and measurements
+combined.test.data <- cbind(subject.test, y.test, x.test)
+combined.train.data <- cbind(subject.train, y.train, x.train)
 
 #combine test and training data
-completeData <- rbind(combinedTestData, combinedTrainData)
-colnames(completeData) <-cbind(c("Subject", "Activity"), mean_and_std_features$FeatureName)
+complete.data <- rbind(combined.test.data, combined.train.data)
+
+# Step 2: extracts only measurements on the mean and std for each measurement
+# First find the features that contain (ignoring case) "mean" or "std" assuming these are all
+# the measurements that are needed
+mean.and.std.features =  features[grepl("mean|std", features$FeatureName, ignore.case = TRUE), ]
+rownames( mean.and.std.features ) <- NULL
+
+# Extract the mean and std columns from the complete data
+reduced.dData <- completeData[,c(1,2, mean.and.std.features$FeatureId + 2)]
+
+
+# Step 3: use descriptive activity names to name the activities
+# Using the information from the "activity labels.txt" file
+reduced.dData[,2] <- factor(reduced.dData[,2], levels = c(1,2,3,4,5,6), 
+      gsub("_", ".", tolower(activity_labels)))
+                          
+#                          labels=c("walking", 
+#                "walking.upstairs", 
+#                "walking.downstairs", 
+#                "sitting", 
+#                "standing", 
+#                "laying"))
+
+
+#Step 4: Finally set the column names
+colnames(reduced.dData) <-c("Subject", "Activity", mean.and.std.features$FeatureName)
+
+
+
+
 
