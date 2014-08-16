@@ -32,7 +32,7 @@ features <- read.table(file.path(main.data.dir, "features.txt"),
                        col.names = c("feature.id", "feature.name"),
                        colClasses=c("feature.name"="character"))
 
-activity.labels <- readLines(file.path(maindata.dir, "activity_labels.txt"))
+activity.labels <- readLines(file.path(main.data.dir, "activity_labels.txt"))
 
 # Step 1: merge training and test sets into one data set
 # First the subjects and activites are combined with the measurements by adding
@@ -54,17 +54,17 @@ mean.and.std.features =  features[grepl("mean|std", features$FeatureName, ignore
 rownames( mean.and.std.features ) <- NULL
 
 # Extract the mean and std columns from the complete data
-reduced.dData <- completeData[,c(1,2, mean.and.std.features$FeatureId + 2)]
+reduced.data <- completeData[,c(1,2, mean.and.std.features$FeatureId + 2)]
 
 
 # Step 3: use descriptive activity names to name the activities
 # Using the information from the "activity labels.txt" file
-reduced.dData[,2] <- factor(reduced.dData[,2], levels = c(1,2,3,4,5,6), 
+reduced.data[,2] <- factor(reduced.data[,2], levels = c(1,2,3,4,5,6), 
       gsub("_", ".", tolower(activity_labels)))
                           
 
 #Step 4: Finally set the column names
-colnames(reduced.dData) <-c("Subject", "Activity", mean.and.std.features$FeatureName)
+colnames(reduced.data) <-c("Subject", "Activity", mean.and.std.features$feature.name)
 
 
 
