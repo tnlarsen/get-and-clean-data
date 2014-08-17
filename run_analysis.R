@@ -32,7 +32,9 @@ features <- read.table(file.path(main.data.dir, "features.txt"),
                        col.names = c("feature.id", "feature.name"),
                        colClasses=c("feature.name"="character"))
 
-activity.labels <- readLines(file.path(main.data.dir, "activity_labels.txt"))
+activity.labels <- read.table(file.path(main.data.dir, "activity_labels.txt"),
+                              col.names = c("activity.id", "activity.name"), 
+                              colClasses=c("activity.name"="character"))$activity.name
 
 # Step 1: merge training and test sets into one data set
 # First the subjects and activites are combined with the measurements by adding
@@ -54,12 +56,14 @@ mean.and.std.features =  features[grepl("mean|std", features$feature.name, ignor
 rownames( mean.and.std.features ) <- NULL
 
 # Extract the mean and std columns from the complete data
-reduced.data <- completeData[,c(1,2, mean.and.std.features$feature.id + 2)]
+reduced.data <- complete.data[,c(1,2, mean.and.std.features$feature.id + 2)]
 
 
 # Step 3: use descriptive activity names to name the activities
 # Using the information from the "activity labels.txt" file
-reduced.data[,2] <- factor(reduced.data[,2], levels = c(1,2,3,4,5,6), gsub("_", ".", tolower(activity_labels)))
+reduced.data[,2] <- factor(reduced.data[,2], 
+                           levels = c(1,2,3,4,5,6), 
+                           labels = gsub("_", ".", tolower(activity.labels)))
                           
 
 # Step 4: Appropriatly label the data
@@ -69,11 +73,14 @@ labels <- mean.and.std.features$feature.name
 
 labels <- gsub("([a-z])([A-Z])", "\\1.\\L\\2", labels, perl = TRUE)  # Convert from calmelCase to . separated
 labels <- gsub("acc", "acceleration", labels)  # Expand acc to acceleration
-labels <- gsub("[()-]", "", labels)  # Remove special characters
+labels <- gsub("[()]", "", labels)  # Remove parentesis
 
 colnames(reduced.data) <-c("subject", "activity", labels)
 
 
+# Step 5: Create a new tidy data set
+library(reshape2)
+molten <- melt(reduced.data, id=c("subject", "activity"), measure.vars=labels)
+tidy.means <- dcast(molten, subject + activity ~ variable, mean)
 
-
-
+write.table(tidy.means, file=file.path(".", "tidy.data.set.txt"), row.name=FALSE)
