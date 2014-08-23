@@ -81,7 +81,6 @@ reduced.data[,2] <- factor(reduced.data[,2],
 # Expanding to complete words: so Acceleration instead of Acc, Magnitude instead of Mag, time instead of t etc.
 # Removing dashes and parenthesis
 # Remove the duplicatiion in BodyBody
-
 labels <- mean.and.std.features$feature.name
 
 labels <- gsub('Acc', 'Acceleration', labels)  # Expand acc to acceleration
@@ -104,5 +103,3 @@ molten <- melt(reduced.data, id=c("subject", "activity"), measure.vars=labels)
 tidy.means <- dcast(molten, subject + activity ~ variable, mean)
 
 write.table(tidy.means, file=file.path(".", "tidy.data.set.txt"), row.name=FALSE)
-
-# Generate the code book
