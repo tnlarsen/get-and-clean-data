@@ -2,6 +2,24 @@
 if(!exists("tidy.means")) {
   source("./run_analysis.R")
 }
+
+build.description <- function(name) {
+  description <- ""
+  if(grepl("^time", name)) {
+    description <- paste(description, "Time based")
+  } else {
+    description <- paste(description, "Frequency based")
+  }
+  
+  if(grepl("Body", name)) {
+    description <- paste(description, "body acceleration")
+  } else if(grepl("Gravity", name)) {
+    description <- paste(description, "gravity acceleration")
+  }
+    
+  description
+}
+
 file.remove("CodeBook.md")
 
 file <- "CodeBook.md"
@@ -24,9 +42,9 @@ header = "# Codebook for tidy data set\n
 write(c(header), file, append=TRUE)
 
 for(name in names(tidy.means)[3:length(names(tidy.means))]) {
-  line1 <- paste("\t\t", name, "\t\t\t\t", "19", sep = "" )
-  line2 <- "\t\t  XXXXX-description"
-  line3 <- paste("\t\t    ", range(tidy.means[name])[1], "..", range(tidy.means[name])[2], sep = "")
+  line1 <- paste("\t\t", name, "     ", max(nchar(tidy.means[name][[1]])), sep = "" )
+  line2 <- paste("\t\t  ", build.description(name), sep = "" )
+  line3 <- paste("\t\t      ", range(tidy.means[name])[1], "..", range(tidy.means[name])[2], sep = "")
  
   write(c(line1, line2, line3, ""), file, append = TRUE)
 }
