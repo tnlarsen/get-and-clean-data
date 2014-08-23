@@ -40,6 +40,13 @@ activity.labels <- read.table(file.path(main.data.dir, "activity_labels.txt"),
 # First the subjects and activites are combined with the measurements by adding
 # them as the first two columns. This is done for both test and training data. Then the 
 # test and training data are combined vertically as rows.
+#
+# The resulting data.frame has this structure:
+#
+# subject.test    y.test    x.test
+# subject.train   y.train   x.train
+#
+
 
 # Combine the subject data, labels and measurements
 combined.test.data <- cbind(subject.test, y.test, x.test)
@@ -50,32 +57,45 @@ complete.data <- rbind(combined.test.data, combined.train.data)
 
 
 # Step 2: extracts only measurements on the mean and std for each measurement
-# First find the features that contain (ignoring case) "mean" or "std" assuming these are all
-# the measurements that are needed
+# First find the features that contain (ignoring case) "mean" or "std" assuming these include all the 
+# measurements that are needed but excluding the ones starting with "angel" since they measure an angel between two 
+# observations. 
 mean.and.std.features =  features[grepl("mean|std", features$feature.name, ignore.case = TRUE), ]
+mean.and.std.features =  mean.and.std.features[!grepl("^angle", mean.and.std.features$feature.name, ignore.case = TRUE), ]
 rownames( mean.and.std.features ) <- NULL
 
 # Extract the mean and std columns from the complete data
+# retaining the two first column which is the subject and activity labels
 reduced.data <- complete.data[,c(1,2, mean.and.std.features$feature.id + 2)]
 
 
 # Step 3: use descriptive activity names to name the activities
 # Using the information from the "activity labels.txt" file
 reduced.data[,2] <- factor(reduced.data[,2], 
-                           levels = c(1,2,3,4,5,6), 
+                           levels = 1:length(activity.labels), 
                            labels = gsub("_", ".", tolower(activity.labels)))
                           
 
 # Step 4: Appropriatly label the data
-# First the labels are massaged a bit:
+# Doing the following manipulations:
+# Expanding to complete words: so Acceleration instead of Acc, Magnitude instead of Mag, time instead of t etc.
+# Removing dashes and parenthesis
+# Remove the duplicatiion in BodyBody
 
 labels <- mean.and.std.features$feature.name
 
-labels <- gsub("([a-z])([A-Z])", "\\1.\\L\\2", labels, perl = TRUE)  # Convert from calmelCase to . separated
-labels <- gsub("acc", "acceleration", labels)  # Expand acc to acceleration
-labels <- gsub("[()]", "", labels)  # Remove parentesis
+labels <- gsub('Acc', 'Acceleration', labels)  # Expand acc to acceleration
+labels <- gsub('Mag', 'Magnitude', labels)  # Expand mag to magnitude
+labels <- gsub('BodyBody','Body', labels) # Replace BodyBody with Body
+labels <- gsub('-mean()','Mean', labels, fixed = TRUE)  # Replace -mean() with Mean
+labels <- gsub('-std()','StandardDeviation', labels, fixed = TRUE)  # Replace -std() with StandardDeviation
+labels <- gsub('-meanFreq()','MeanFrequency', labels, fixed = TRUE)  # Replace -meanFreq() with MeanFrequency
+labels <- gsub('^t','time', labels)  # Replace starting t with time
+labels <- gsub('^f','frequency', labels)  # Replace starting f with frequency
+labels <- gsub('(-)(X|Y|Z)', '\\2axis', labels)  # Replace -X with Xaxis and similarly for Y and Z
 
-colnames(reduced.data) <-c("subject", "activity", labels)
+# Finally set the column names
+colnames(reduced.data) <- c("subject", "activity", labels)
 
 
 # Step 5: Create a new tidy data set
@@ -84,3 +104,5 @@ molten <- melt(reduced.data, id=c("subject", "activity"), measure.vars=labels)
 tidy.means <- dcast(molten, subject + activity ~ variable, mean)
 
 write.table(tidy.means, file=file.path(".", "tidy.data.set.txt"), row.name=FALSE)
+
+# Generate the code book
