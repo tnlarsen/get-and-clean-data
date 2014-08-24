@@ -83,9 +83,11 @@ reduced.data[,2] <- factor(reduced.data[,2],
 # Remove the duplicatiion in BodyBody
 labels <- mean.and.std.features$feature.name
 
-labels <- gsub('Acc', 'Acceleration', labels)  # Expand acc to acceleration
-labels <- gsub('Mag', 'Magnitude', labels)  # Expand mag to magnitude
-labels <- gsub('BodyBody','Body', labels) # Replace BodyBody with Body
+labels <- gsub('Acc', 'Acceleration', labels)  # Expand Acc to Acceleration
+labels <- gsub('Mag', 'Magnitude', labels)  # Expand Mag to Magnitude
+labels <- gsub('Gyro', 'Gyroscope', labels)  # Expand Gyro to Gyroscope
+
+labels <- gsub('BodyBody','Body', labels) # Replace BodyBody with Body assuming it is an error in the names
 labels <- gsub('-mean()','Mean', labels, fixed = TRUE)  # Replace -mean() with Mean
 labels <- gsub('-std()','StandardDeviation', labels, fixed = TRUE)  # Replace -std() with StandardDeviation
 labels <- gsub('-meanFreq()','MeanFrequency', labels, fixed = TRUE)  # Replace -meanFreq() with MeanFrequency

@@ -5,18 +5,41 @@ if(!exists("tidy.means")) {
 
 build.description <- function(name) {
   description <- ""
-  if(grepl("^time", name)) {
-    description <- paste(description, "Time based")
-  } else {
-    description <- paste(description, "Frequency based")
+  
+  if(grepl("Mean", name)) {
+    description <- paste(description, "Mean of")
+  } else if (grepl("StandardDeviation", name)) {
+    description <- paste(description, "Standard deviation of")
   }
   
-  if(grepl("Body", name)) {
+  if(grepl("^time", name)) {
+    description <- paste(description, "time domain based")
+  } else {
+    description <- paste(description, "frequency domain based")
+  }
+  
+  if(grepl("BodyAccel", name)) {
     description <- paste(description, "body acceleration")
-  } else if(grepl("Gravity", name)) {
+  } else if(grepl("GravityAccel", name)) {
     description <- paste(description, "gravity acceleration")
+  } 
+
+  if(grepl("Gyro", name)) {
+    description <- paste(description, "gyroscope")
+  }
+  
+  if(grepl("Jerk", name)) {
+    description <- paste(description, "jerk signal")
   }
     
+  if(grepl("Xaxis", name)) {
+    description <- paste(description, "on the X-axis")
+  } else if(grepl("Yaxis", name)) {
+    description <- paste(description, "on the Y-axis")
+  } else if(grepl("Zaxis", name)) {
+    description <- paste(description, "on the Z-axis")
+  }
+  
   description
 }
 
