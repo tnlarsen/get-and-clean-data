@@ -49,6 +49,8 @@ file <- "CodeBook.md"
 
 header = "# Codebook for tidy data set\n
 
+All measurements below are means of all measurements done for each subject/activity combination.
+
 \t\tsubject\t\t\t\t2
 \t\t  Subject identifier
 \t\t    1-30              .Subject identifier

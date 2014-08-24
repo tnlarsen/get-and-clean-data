@@ -1,6 +1,8 @@
 # Codebook for tidy data set
 
 
+All measurements below are means of all measurements done for each subject/activity combination.
+
 		subject				2
 		  Subject identifier
 		    1-30              .Subject identifier

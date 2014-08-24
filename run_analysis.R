@@ -46,8 +46,6 @@ activity.labels <- read.table(file.path(main.data.dir, "activity_labels.txt"),
 # subject.test    y.test    x.test
 # subject.train   y.train   x.train
 #
-
-
 # Combine the subject data, labels and measurements
 combined.test.data <- cbind(subject.test, y.test, x.test)
 combined.train.data <- cbind(subject.train, y.train, x.train)
@@ -86,7 +84,6 @@ labels <- mean.and.std.features$feature.name
 labels <- gsub('Acc', 'Acceleration', labels)  # Expand Acc to Acceleration
 labels <- gsub('Mag', 'Magnitude', labels)  # Expand Mag to Magnitude
 labels <- gsub('Gyro', 'Gyroscope', labels)  # Expand Gyro to Gyroscope
-
 labels <- gsub('BodyBody','Body', labels) # Replace BodyBody with Body assuming it is an error in the names
 labels <- gsub('-mean()','Mean', labels, fixed = TRUE)  # Replace -mean() with Mean
 labels <- gsub('-std()','StandardDeviation', labels, fixed = TRUE)  # Replace -std() with StandardDeviation
