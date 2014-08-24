@@ -23,7 +23,7 @@ Here I just use a lowercase version of the names loaded from "activity_labels.tx
 ### Step 4: Appropriatly label the data
 The following manipulations for the names are done:
 
-  * Expanding to complete words: so Acceleration instead of Acc, Magnitude instead of Mag, Gyroscpoe instead of Gyro
+  * Expanding to complete words: so Acceleration instead of Acc, Magnitude instead of Mag, Gyroscope instead of Gyro
   * Convert 't' and 'f' prefixes to "time" and "frequency" 
   * Removing dashes and parenthesis
   * Remove the duplication in BodyBody
