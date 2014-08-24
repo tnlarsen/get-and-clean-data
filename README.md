@@ -18,7 +18,7 @@ measurements that are needed. After that I exclude the measurements starting wit
 observations. 
 
 ### Step 3: Use descriptive activity names to name the activities
-Here I just use a lowercase version of the named loaded from "activity_labels.txt" file. In the names '_' is replaced with '.'
+Here I just use a lowercase version of the names loaded from "activity_labels.txt" file. In the names '_' is replaced with '.'
 
 ### Step 4: Appropriatly label the data
 The following manipulations for the names are done:
@@ -28,6 +28,8 @@ The following manipulations for the names are done:
   * Removing dashes and parenthesis
   * Remove the duplication in BodyBody
   * replace "-mean()" with "Mean", "-std()" with "StandardDeviation" and "-meanFreq()" with "MeanFrequency"
+  
+I selected to keep the names in camelCase since they would have been unreadable in all lowercase. 
 
 ### Step 5: Creates a second, independent tidy data set
 This is done by first melting the data using "melt" and afterwards "dcast"'ing the data into the wide form using the "mean" function as the aggregation function.
