@@ -5,7 +5,7 @@ All measurements below are means of all measurements done for each subject/activ
 
 		subject				2
 		  Subject identifier
-		    1-30              .Subject identifier
+		    1-30                .Subject identifier
             
 		activity				18
 		  Activity name

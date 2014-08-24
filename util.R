@@ -53,7 +53,7 @@ All measurements below are means of all measurements done for each subject/activ
 
 \t\tsubject\t\t\t\t2
 \t\t  Subject identifier
-\t\t    1-30              .Subject identifier
+\t\t    1-30                .Subject identifier
             
 \t\tactivity\t\t\t\t18
 \t\t  Activity name
@@ -73,6 +73,4 @@ for(name in names(tidy.means)[3:length(names(tidy.means))]) {
  
   write(c(line1, line2, line3, ""), file, append = TRUE)
 }
-
-#close(file)
 

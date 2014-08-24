@@ -2,7 +2,7 @@
 
 Description of the manipulations done in 'run_analysis.R'. Analysis done on data from [1].
 
-##Manipulations
+##performed manipulations 
 
 ### Step 1: Merge training and test sets into one data set
 First the subjects and activites are combined with the measurements by adding them as the first two columns. This is done for both test and training data. Then the test and training data are combined vertically as rows.

@@ -101,4 +101,4 @@ library(reshape2)
 molten <- melt(reduced.data, id=c("subject", "activity"), measure.vars=labels)
 tidy.means <- dcast(molten, subject + activity ~ variable, mean)
 
-write.table(tidy.means, file=file.path(".", "tidy.data.set.txt"), row.name=FALSE)
+write.table(tidy.means, file=file.path(".", "tidy.data.set.txt"), row.name=FALSE) 
